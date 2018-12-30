@@ -1,9 +1,12 @@
-package com.example
+package com.denolia
 
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.features.CallLogging
+import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
+import io.ktor.gson.gson
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
@@ -25,12 +28,17 @@ fun Application.module(testing: Boolean = false) {
             )
         }
     }
+    install(CallLogging)
+    install(ContentNegotiation) {
+        gson {
+            setPrettyPrinting()
+            serializeNulls()
+        }
+    }
 
     routing {
-        get("/asdf") {
-            call.respond(Response(status = "Ok"))
+        get("/books") {
+            call.respond(get_all_books())
         }
     }
 }
-
-data class Response(val status: String)
