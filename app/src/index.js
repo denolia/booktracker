@@ -1,39 +1,87 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import BootstrapTable from 'react-bootstrap-table-next';
+import React from "react";
+import { render } from "react-dom";
 
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// Import React Table
+import ReactTable from "react-table";
+import "react-table/react-table.css";
+
+import $ from 'jquery'; 
 
 
-export const productsGenerator = (quantity = 5, callback) => {
-    if (callback) return Array.from({ length: quantity }, callback);
-  
-    // if no given callback, retrun default product format.
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      data: []
+    };
+  }
+  componentDidMount() {
+    $.ajax({
+       url: "http://localhost:8080/books",
+       type: "GET",
+       dataType: 'json',
+       ContentType: 'application/json',
+       success: function(data) {
+         
+         this.setState({data: data});
+       }.bind(this),
+       error: function(jqXHR) {
+         console.log(jqXHR);
+       }.bind(this)
+    })
+  }
+  render() {
+    const { data } = this.state;
     return (
-      Array.from({ length: quantity }, (value, index) => ({
-        id: index,
-        name: `Item name ${index}`,
-        price: 2100 + index
-      }))
+      <div>
+        <ReactTable
+          data={data}
+          columns={[
+            {
+              Header: "Name",
+              columns: [
+                {
+                  Header: "First Name",
+                  accessor: "firstName"
+                },
+                {
+                  Header: "Last Name",
+                  id: "lastName",
+                  accessor: d => d.name
+                }
+              ]
+            },
+            {
+              Header: "Info",
+              columns: [
+                {
+                  Header: "Age",
+                  id: "progress",
+                  accessor: d => d.progress
+                },
+                {
+                  Header: "Status",
+                  accessor: "status"
+                }
+              ]
+            },
+            {
+              Header: 'Stats',
+              columns: [
+                {
+                  Header: "Visits",
+                  accessor: "visits"
+                }
+              ]
+            }
+          ]}
+          defaultPageSize={10}
+          className="-striped -highlight"
+        />
+        <br />
+      </div>
     );
-  };
+  }
+}
 
-const products = productsGenerator();
-  
-
-const columns = [{
-  dataField: 'id',
-  text: 'Product ID'
-}, {
-  dataField: 'name',
-  text: 'Product Name'
-}, {
-  dataField: 'price',
-  text: 'Product Price'
-}];
-
-ReactDOM.render(
-  <BootstrapTable bootstrap4  keyField='id' data={ products } columns={ columns } />,
-  document.getElementById('root')
-);
+render(<App />, document.getElementById("root"));

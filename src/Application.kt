@@ -3,6 +3,7 @@ package com.denolia
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
@@ -27,6 +28,10 @@ fun Application.module(testing: Boolean = false) {
                 HttpStatusCode.InternalServerError
             )
         }
+    }
+    install(CORS) {
+        anyHost()
+        allowCredentials = true
     }
     install(CallLogging)
     install(ContentNegotiation) {
