@@ -1,5 +1,6 @@
-# booktracker
+# booktracker (Archived)
 First version of the booktracker app backend. 
+
 New version can be found here: https://github.com/demoth/booktrackerbackend
 
 
